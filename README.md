@@ -17,3 +17,7 @@ El texto preparado se invalida si se modifica cualquier dato del formulario. Los
 GitHub Pages desde main, mediante .github/workflows/deploy.yml. Ruta base /minas-demo-ferreteria/. Para un dominio independiente, ajustar base y configuración. El noindex evita indexar el negocio ficticio; cambiarlo al adaptar la web a un cliente real.
 
 Para activar el número en GitHub Actions, añadirlo como variable del repositorio e inyectarlo en el paso de compilación. No usar teléfonos personales de prueba sin autorización.
+
+## Fotografía
+
+`public/images/workshop-tools.jpg`: “A Variety of Tools at a Workshop”, foto de Tima Miroshnichenko, vía [Pexels](https://www.pexels.com/photo/a-variety-of-tools-at-a-workshop-5846253/).
