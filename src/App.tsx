@@ -1,4 +1,4 @@
-import { useMemo, useState, type FormEvent } from 'react'
+import { useEffect, useMemo, useState, type FormEvent } from 'react'
 
 const configuredWhatsappNumber = import.meta.env.VITE_WHATSAPP_NUMBER ?? ''
 const whatsappNumber =
@@ -13,6 +13,15 @@ const categories = [
   'Corte y abrasivos',
   'Seguridad laboral',
   'Plomería y mantenimiento',
+]
+
+const categoryHighlights = [
+  { title: 'Soldadura', description: 'Electrodos, conexiones y accesorios.', icon: 'spark' },
+  { title: 'Tornillería y fijaciones', description: 'Bulones, tornillos y anclajes.', icon: 'screw' },
+  { title: 'Herramientas', description: 'Opciones para trabajo y mantenimiento.', icon: 'wrench' },
+  { title: 'Corte y abrasivos', description: 'Discos y consumibles de corte.', icon: 'disc' },
+  { title: 'Seguridad laboral', description: 'Elementos de protección personal.', icon: 'glasses' },
+  { title: 'Plomería y mantenimiento', description: 'Accesorios para reparación y montaje.', icon: 'pipe' },
 ]
 
 const products = [
@@ -38,10 +47,41 @@ const products = [
 
 type Product = (typeof products)[number]
 type QuoteItem = { code: string; quantity: number }
+type PageItem = number | 'ellipsis'
+
+function pageItems(pageCount: number, current: number): PageItem[] {
+  if (pageCount <= 7) return Array.from({ length: pageCount }, (_, index) => index + 1)
+  const numbers = [...new Set([1, pageCount, current - 1, current, current + 1])].filter((number) => number >= 1 && number <= pageCount).sort((a, b) => a - b)
+  const items: PageItem[] = []
+  let previous = 0
+  for (const number of numbers) {
+    if (number - previous === 2) items.push(previous + 1)
+    else if (number - previous > 2) items.push('ellipsis')
+    items.push(number)
+    previous = number
+  }
+  return items
+}
+
+function DepartmentGlyph({ name }: { name: string }) {
+  const common = { fill: 'none', stroke: 'currentColor', strokeLinecap: 'round' as const, strokeLinejoin: 'round' as const, strokeWidth: 1.8 }
+  return (
+    <svg viewBox="0 0 48 48" aria-hidden="true" {...common}>
+      {name === 'spark' && <><path d="M24 6v36M6 24h36M11 11l26 26M37 11 11 37" /><circle cx="24" cy="24" r="5" /></>}
+      {name === 'screw' && <><path d="m16 12 4-4h8l4 4v5l-4 4H20l-4-4v-5Z" /><path d="m24 21-12 17m15-13 4 3m-8 1 4 3m-8 1 4 3m-8 1 4 3" /></>}
+      {name === 'wrench' && <><path d="M29 10a11 11 0 0 0-13 14L8 32a5 5 0 1 0 7 7l8-8a11 11 0 0 0 14-13l-7 7-7-7 6-8Z" /><circle cx="12" cy="35" r="1.4" /></>}
+      {name === 'disc' && <><circle cx="24" cy="24" r="17" /><circle cx="24" cy="24" r="5" /><path d="M24 7v12m17 5H29m-5 17V29M7 24h12" /></>}
+      {name === 'glasses' && <><path d="M6 19h4l3 14h8l3-9 3 9h8l3-14h4" /><path d="M13 19a4 4 0 0 0 0 8h4a4 4 0 0 0 4-4v-4m14 0a4 4 0 0 1 0 8h-4a4 4 0 0 1-4-4v-4m-6 4h6" /></>}
+      {name === 'pipe' && <><path d="M10 11h11v12h8v14H18V30H10V11Z" /><path d="M10 16h11m8 12v9m-19-9h8" /><circle cx="35" cy="13" r="5" /></>}
+    </svg>
+  )
+}
 
 function App() {
+  const pageSize = 6
   const [activeCategory, setActiveCategory] = useState('Todos')
   const [search, setSearch] = useState('')
+  const [page, setPage] = useState(1)
   const [quantities, setQuantities] = useState<Record<string, string>>({})
   const [quoteItems, setQuoteItems] = useState<QuoteItem[]>([])
   const [company, setCompany] = useState('')
@@ -58,6 +98,15 @@ function App() {
       return matchesCategory && (!query || searchable.includes(query))
     })
   }, [activeCategory, search])
+
+  const pageCount = Math.max(1, Math.ceil(visibleProducts.length / pageSize))
+  const firstVisible = visibleProducts.length ? (page - 1) * pageSize + 1 : 0
+  const lastVisible = Math.min(page * pageSize, visibleProducts.length)
+  const pagedProducts = visibleProducts.slice((page - 1) * pageSize, page * pageSize)
+
+  useEffect(() => {
+    setPage((current) => Math.min(current, pageCount))
+  }, [pageCount])
 
   const quoteCount = quoteItems.reduce((total, item) => total + item.quantity, 0)
   const generatedSummary = useMemo(() => {
@@ -136,29 +185,59 @@ function App() {
         <nav className="main-nav" aria-label="Navegación principal">
           <a href="#catalogo">Catálogo</a>
           <a href="#presupuesto">Presupuesto <span className="nav-count">{quoteCount}</span></a>
+          <a href="#contacto">Contacto</a>
         </nav>
-        <a className="header-link" href="#presupuesto">Armar presupuesto <span aria-hidden="true">↗</span></a>
+        <a className="header-link" href="#presupuesto">Solicitar cotización <span aria-hidden="true">↗</span></a>
       </header>
 
       <main id="main-content" tabIndex={-1}>
         <section className="hero" id="inicio">
           <div className="hero-copy">
             <p className="eyebrow"><span /> FERRETERÍA INDUSTRIAL · MINAS</p>
-            <h1>Herramientas, fijaciones<br /><em>e insumos de trabajo.</em></h1>
-            <p className="hero-intro">Buscá por nombre o medida. Sumá varios artículos y prepará una solicitud clara para cotizar.</p>
+            <h1>Herramientas e insumos<br /><em>para cada proyecto.</em></h1>
+            <p className="hero-intro">Todo para el taller, la obra y el mantenimiento. Encontrá productos por rubro o medida y reuní lo que necesitás en una solicitud.</p>
             <div className="hero-actions">
-              <a className="button button-dark" href="#catalogo">Explorar catálogo <span aria-hidden="true">↓</span></a>
-              <span className="catalog-count">18 referencias de muestra</span>
+              <a className="button button-dark" href="#catalogo">Explorar productos <span aria-hidden="true">↓</span></a>
+              <a className="hero-quote-link" href="#presupuesto">Preparar una cotización <span aria-hidden="true">↗</span></a>
             </div>
+            <ul className="hero-benefits" aria-label="Qué podés hacer en el catálogo">
+              <li><span>01</span> Buscar por medida</li>
+              <li><span>02</span> Elegir por rubro</li>
+              <li><span>03</span> Preparar tu lista</li>
+            </ul>
           </div>
           <figure className="hero-photo">
-            <img src="/images/workshop-tools.jpg" alt="Herramientas y discos abrasivos sobre una mesa de taller" />
+            <img src={`${import.meta.env.BASE_URL}images/workshop-tools.jpg`} alt="Herramientas y discos abrasivos sobre una mesa de taller" />
             <figcaption className="hero-photo-caption">
               <span className="demo-label">Sitio de demostración</span>
               <a className="photo-credit" href="https://www.pexels.com/photo/a-variety-of-tools-at-a-workshop-5846253/" target="_blank" rel="noreferrer">Foto: Tima Miroshnichenko / Pexels</a>
             </figcaption>
           </figure>
-          <div className="hero-index" aria-hidden="true"><span>01</span><span>—</span><span>18</span></div>
+        </section>
+
+        <section className="departments-section" aria-labelledby="departments-title">
+          <div className="departments-heading">
+            <div>
+              <p className="eyebrow">PRODUCTOS POR RUBRO</p>
+              <h2 id="departments-title">Encontrá lo que buscás.</h2>
+            </div>
+            <p>Elegí una categoría para ver sus referencias y especificaciones en el catálogo.</p>
+          </div>
+          <div className="departments-grid">
+            {categoryHighlights.map((category, index) => (
+              <a
+                className="department-card"
+                href="#catalogo"
+                key={category.title}
+                onClick={() => { setActiveCategory(category.title); setSearch(''); setPage(1) }}
+              >
+                <span className="department-card-top"><span className="department-icon"><DepartmentGlyph name={category.icon} /></span><span className="department-index">0{index + 1}</span></span>
+                <strong>{category.title}</strong>
+                <small>{category.description}</small>
+                <span className="department-action">Ver productos <span aria-hidden="true">↗</span></span>
+              </a>
+            ))}
+          </div>
         </section>
 
         <section className="catalog-section section-wrap" id="catalogo">
@@ -171,21 +250,21 @@ function App() {
             <label className="search-box">
               <span aria-hidden="true">⌕</span>
               <span className="visually-hidden">Buscar en el catálogo</span>
-              <input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Buscar producto, medida o código…" />
-              {search && <button type="button" onClick={() => setSearch('')} aria-label="Limpiar búsqueda">×</button>}
+              <input value={search} onChange={(event) => { setSearch(event.target.value); setPage(1) }} placeholder="Buscar producto, medida o código…" />
+              {search && <button type="button" onClick={() => { setSearch(''); setPage(1) }} aria-label="Limpiar búsqueda">×</button>}
             </label>
-            <span className="results-count" aria-live="polite">{visibleProducts.length} productos</span>
+            <span className="results-count" aria-live="polite">{visibleProducts.length ? `Mostrando ${firstVisible}–${lastVisible} de ${visibleProducts.length} productos` : '0 productos'}</span>
           </div>
 
           <div className="filter-list" aria-label="Filtrar por rubro">
             {['Todos', ...categories].map((item) => (
-              <button key={item} type="button" className={'filter-chip' + (activeCategory === item ? ' active' : '')} onClick={() => setActiveCategory(item)} aria-pressed={activeCategory === item}>{item}</button>
+              <button key={item} type="button" className={'filter-chip' + (activeCategory === item ? ' active' : '')} onClick={() => { setActiveCategory(item); setPage(1) }} aria-pressed={activeCategory === item}>{item}</button>
             ))}
           </div>
 
           {visibleProducts.length ? (
             <div className="product-grid">
-              {visibleProducts.map((product) => {
+              {pagedProducts.map((product) => {
                 const selected = quoteItems.find((item) => item.code === product.code)
                 const quantity = quantities[product.code] ?? '1'
                 return (
@@ -212,9 +291,19 @@ function App() {
           ) : (
             <div className="empty-catalog"><strong>No encontramos productos.</strong><span>Probá otro nombre, código o medida.</span></div>
           )}
+          {pageCount > 1 && <nav className="catalog-pagination" aria-label="Paginación del catálogo">
+            <button type="button" onClick={() => setPage((current) => Math.max(1, current - 1))} disabled={page === 1} aria-label="Página anterior">Anterior</button>
+            <div className="catalog-page-numbers" aria-label="Páginas">
+              {pageItems(pageCount, page).map((item, index) => item === 'ellipsis'
+                ? <span key={`ellipsis-${index}`} aria-hidden="true">…</span>
+                : <button key={item} type="button" onClick={() => setPage(item)} aria-label={`Página ${item}`} aria-current={page === item ? 'page' : undefined}>{item}</button>)}
+            </div>
+            <button type="button" onClick={() => setPage((current) => Math.min(pageCount, current + 1))} disabled={page === pageCount} aria-label="Página siguiente">Siguiente</button>
+          </nav>}
         </section>
 
         <section className="quote-section" id="presupuesto">
+          <span id="contacto" className="contact-anchor" aria-hidden="true" />
           <div className="quote-inner">
             <div className="quote-heading">
               <p className="eyebrow eyebrow-light">SOLICITUD DE COTIZACIÓN</p>
@@ -276,7 +365,7 @@ function App() {
           <span className="brand-name">El Tornillo<span>Ferretería</span></span>
         </a>
         <p>Minas, Lavalleja <span>·</span> Catálogo de referencia</p>
-        <a href="#inicio">Volver arriba ↑</a>
+        <div className="footer-actions"><a href="#contacto">Contacto y cotizaciones</a><a href="#inicio">Volver arriba ↑</a></div>
       </footer>
     </div>
   )
