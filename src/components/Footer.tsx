@@ -1,16 +1,17 @@
-import { AUTOR, NEGOCIO } from '../config'
+import { useDatos } from '../data/contexto'
 import { RUBROS } from '../data/rubros'
 
 export function Footer() {
+  const { negocio, autor } = useDatos()
   return (
     <footer className="bg-graphite-deep py-14 text-kraft/80">
       <div className="mx-auto grid max-w-6xl grid-cols-1 gap-10 px-4 sm:px-6 md:grid-cols-3">
         <div>
           <p className="font-display text-lg uppercase tracking-wide text-kraft">
-            {NEGOCIO.nombre}
+            {negocio.nombre}
           </p>
           <p className="mt-1 font-condensed text-sm uppercase tracking-widest text-safety">
-            {NEGOCIO.slogan}
+            {negocio.slogan}
           </p>
           <p className="mt-4 text-sm text-kraft/60">
             Datos de contacto ficticios, creados a modo de demostración de portafolio para
@@ -23,11 +24,11 @@ export function Footer() {
             Contacto
           </h3>
           <ul className="mt-3 space-y-2 text-sm text-kraft/70">
-            <li>WhatsApp: {NEGOCIO.whatsappDisplay} (ejemplo)</li>
-            <li>Teléfono fijo: {NEGOCIO.telefonoFijo} (ejemplo)</li>
-            <li>Email: {NEGOCIO.email}</li>
+            <li>WhatsApp: {negocio.whatsappDisplay} (ejemplo)</li>
+            <li>Teléfono fijo: {negocio.telefonoFijo} (ejemplo)</li>
+            <li>Email: {negocio.email}</li>
             <li>
-              {NEGOCIO.direccion}, {NEGOCIO.ciudad}
+              {negocio.direccion}, {negocio.ciudad}
             </li>
           </ul>
         </div>
@@ -48,24 +49,29 @@ export function Footer() {
         </div>
       </div>
 
-      <div className="mx-auto mt-10 max-w-6xl border-t border-kraft/15 px-4 pt-6 text-xs text-kraft/50 sm:px-6">
+      <div className="mx-auto mt-10 flex max-w-6xl flex-col gap-3 border-t border-kraft/15 px-4 pt-6 text-xs text-kraft/50 sm:flex-row sm:items-center sm:justify-between sm:px-6">
         <p>
-          © {new Date().getFullYear()} {NEGOCIO.nombre} — sitio de demostración de portafolio.
-          Todos los datos son ficticios.
+          © {new Date().getFullYear()} {negocio.nombre}. Sitio de demostración de portafolio,
+          todos los datos son ficticios.
         </p>
-        <p className="mt-2">
-          Sitio demo por {AUTOR.nombre} — ¿querés una página así para tu negocio?{' '}
+        <a href="#/admin" className="underline underline-offset-2 hover:text-kraft/80">
+          Administrar sitio
+        </a>
+      </div>
+      <div className="mx-auto mt-3 max-w-6xl px-4 text-xs text-kraft/50 sm:px-6">
+        <p>
+          Sitio demo por {autor.nombre}. ¿Querés una página así para tu negocio?{' '}
           <a
-            href={`https://wa.me/${AUTOR.whatsapp}?text=${encodeURIComponent(
-              `Hola ${AUTOR.nombre}! Vi la demo de ${NEGOCIO.nombre} y quería consultarte por una web para mi negocio.`,
+            href={`https://wa.me/${autor.whatsapp}?text=${encodeURIComponent(
+              `Hola ${autor.nombre}! Vi la demo de ${negocio.nombre} y quería consultarte por una web para mi negocio.`,
             )}`}
             target="_blank"
             rel="noopener noreferrer"
             className="font-semibold text-safety underline underline-offset-2 hover:text-kraft"
           >
             Escribime
-          </a>{' '}
-          — {AUTOR.texto}.
+          </a>
+          . {autor.texto}.
         </p>
       </div>
     </footer>

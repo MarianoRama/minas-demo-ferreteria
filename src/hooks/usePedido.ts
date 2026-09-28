@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
-import { PRODUCTOS } from '../data/productos'
+import type { Producto } from '../data/productos'
 
 const STORAGE_KEY = 'el-tornillo-pedido'
 
@@ -11,10 +11,9 @@ function cargarPedidoGuardado(): Pedido {
     if (!crudo) return {}
     const parseado = JSON.parse(crudo)
     if (typeof parseado !== 'object' || parseado === null) return {}
-    const idsValidos = new Set(PRODUCTOS.map((p) => p.id))
     const limpio: Pedido = {}
     for (const [id, cantidad] of Object.entries(parseado)) {
-      if (idsValidos.has(id) && typeof cantidad === 'number' && cantidad > 0) {
+      if (typeof cantidad === 'number' && cantidad > 0) {
         limpio[id] = cantidad
       }
     }
@@ -28,11 +27,11 @@ function guardarPedido(pedido: Pedido) {
   try {
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(pedido))
   } catch {
-    // localStorage no disponible (modo privado, cuotas, etc.) — seguimos sin persistir.
+    // localStorage no disponible (modo privado, cuotas, etc.), seguimos sin persistir.
   }
 }
 
-export function usePedido() {
+export function usePedido(productos: Producto[]) {
   const [pedido, setPedido] = useState<Pedido>(() => cargarPedidoGuardado())
 
   useEffect(() => {
@@ -68,10 +67,10 @@ export function usePedido() {
 
   const items = Object.entries(pedido)
     .map(([id, cantidad]) => {
-      const producto = PRODUCTOS.find((p) => p.id === id)
+      const producto = productos.find((p) => p.id === id)
       return producto ? { producto, cantidad } : null
     })
-    .filter((item): item is { producto: (typeof PRODUCTOS)[number]; cantidad: number } => item !== null)
+    .filter((item): item is { producto: Producto; cantidad: number } => item !== null)
 
   const total = items.reduce((acc, item) => acc + item.producto.precio * item.cantidad, 0)
   const cantidadTotal = items.reduce((acc, item) => acc + item.cantidad, 0)

@@ -1,4 +1,4 @@
-import { NEGOCIO } from '../config'
+import { useDatos } from '../data/contexto'
 import { Revelar } from './Revelar'
 
 function IlustracionMostrador() {
@@ -65,8 +65,9 @@ function IlustracionMostrador() {
 }
 
 export function AsesoramientoTecnico() {
+  const { negocio } = useDatos()
   const mensaje = encodeURIComponent(
-    `Hola! Quiero consultar con alguien de ${NEGOCIO.nombre} sobre qué producto necesito.`,
+    `Hola! Quiero consultar con alguien de ${negocio.nombre} sobre qué producto necesito.`,
   )
 
   return (
@@ -77,19 +78,19 @@ export function AsesoramientoTecnico() {
         </Revelar>
         <Revelar retraso={80}>
           <div>
-            <p className="font-condensed text-sm font-bold uppercase tracking-[0.3em] text-safety">
-              No te vamos a vender algo que no sirve
-            </p>
-            <h2 className="mt-2 font-display text-3xl uppercase text-kraft sm:text-4xl">
+            <h2 className="font-display text-3xl uppercase text-kraft sm:text-4xl">
               Asesoramiento técnico
             </h2>
+            <p className="mt-1 font-marcador text-xl text-safety">
+              No te vendemos algo que no te sirve.
+            </p>
             <p className="mt-4 max-w-md text-kraft/75">
-              En {NEGOCIO.nombre} te ayudamos a elegir lo que mejor se adapta a tu proyecto:
+              En {negocio.nombre} te ayudamos a elegir lo que mejor se adapta a tu proyecto:
               desde el tornillo correcto hasta el equipo para una obra completa. Contanos qué
               necesitás resolver y te orientamos, sin compromiso.
             </p>
             <a
-              href={`https://wa.me/${NEGOCIO.whatsappNumero}?text=${mensaje}`}
+              href={`https://wa.me/${negocio.whatsappNumero}?text=${mensaje}`}
               target="_blank"
               rel="noopener noreferrer"
               className="enlace-flecha mt-6 inline-flex min-h-[48px] items-center gap-2 border-2 border-safety bg-safety px-6 font-condensed text-base font-bold uppercase tracking-wide text-graphite transition hover:bg-safety-deep hover:border-safety-deep"

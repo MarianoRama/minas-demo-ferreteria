@@ -11,10 +11,7 @@ export function Rubros({ onSeleccionar }: Props) {
     <section id="rubros" className="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-24">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <p className="font-condensed text-sm font-bold uppercase tracking-[0.3em] text-tool">
-            Índice del local
-          </p>
-          <h2 className="mt-2 font-display text-4xl uppercase text-graphite sm:text-5xl">
+          <h2 className="font-display text-4xl uppercase text-graphite sm:text-5xl">
             Nuestros rubros
           </h2>
         </div>

@@ -1,4 +1,4 @@
-import { DIAS_LABEL, HORARIOS, type Rango } from '../config'
+import { DIAS_LABEL, type Rango } from '../config'
 
 export type EstadoHorario = {
   abierto: boolean
@@ -57,9 +57,9 @@ function estaEnRango(minutoActual: number, rango: Rango): boolean {
   return minutoActual >= desde && minutoActual < hasta
 }
 
-export function calcularEstadoHorario(): EstadoHorario {
+export function calcularEstadoHorario(horarios: Record<number, Rango[]>): EstadoHorario {
   const { dia, horas, minutos, horaTexto } = obtenerAhoraUruguay()
-  const rangosDeHoy = HORARIOS[dia] ?? []
+  const rangosDeHoy = horarios[dia] ?? []
   const minutoActual = minutosDelDia(horas, minutos)
   const abierto = rangosDeHoy.some((rango) => estaEnRango(minutoActual, rango))
 

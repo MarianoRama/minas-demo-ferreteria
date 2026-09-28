@@ -13,8 +13,8 @@ export function MarcasCinta() {
 
   return (
     <section className="border-y-2 border-graphite bg-kraft-deep py-10 sm:py-12">
-      <p className="mx-auto max-w-6xl px-4 font-condensed text-sm font-bold uppercase tracking-[0.3em] text-graphite-soft sm:px-6">
-        Trabajamos con las mejores marcas
+      <p className="mx-auto max-w-6xl px-4 font-condensed text-sm font-semibold uppercase tracking-widest text-graphite-soft sm:px-6">
+        Las marcas que pedimos siempre
       </p>
 
       <div

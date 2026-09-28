@@ -1,4 +1,4 @@
-import { NEGOCIO } from '../config'
+import { useDatos } from '../data/contexto'
 import { formatearPrecio } from '../data/productos'
 
 const ITEMS_TICKET = [
@@ -8,7 +8,11 @@ const ITEMS_TICKET = [
 ]
 const TOTAL_TICKET = ITEMS_TICKET.reduce((acc, it) => acc + it.cant * it.precio, 0)
 
-export function Hero() {
+type Props = { onIrAOfertas: () => void }
+
+export function Hero({ onIrAOfertas }: Props) {
+  const { negocio } = useDatos()
+
   return (
     <section id="inicio" className="relative overflow-hidden bg-graphite">
       <div
@@ -23,7 +27,7 @@ export function Hero() {
       <div className="relative mx-auto grid max-w-6xl gap-10 px-4 py-14 sm:px-6 sm:py-20 lg:grid-cols-[1.15fr_0.85fr] lg:items-center lg:py-24">
         <div>
           <p className="font-condensed text-sm font-bold uppercase tracking-[0.3em] text-safety">
-            Ferretería de barrio · {NEGOCIO.ciudad}
+            Ferretería de barrio · {negocio.ciudad}
           </p>
           <h1 className="mt-4 font-display text-[clamp(2.6rem,8vw,4.75rem)] leading-[0.95] uppercase text-kraft">
             Todo para tu obra,
@@ -43,6 +47,13 @@ export function Hero() {
             >
               Armá tu pedido
             </a>
+            <button
+              type="button"
+              onClick={onIrAOfertas}
+              className="inline-flex min-h-[48px] items-center justify-center border-2 border-tool bg-tool px-6 font-condensed text-base font-bold uppercase tracking-wide text-kraft transition hover:border-tool-deep hover:bg-tool-deep"
+            >
+              Ofertas de la semana
+            </button>
             <a
               href="#horarios"
               className="inline-flex min-h-[48px] items-center justify-center border-2 border-kraft/40 px-6 font-condensed text-base font-bold uppercase tracking-wide text-kraft transition hover:border-kraft"
@@ -51,26 +62,16 @@ export function Hero() {
             </a>
           </div>
 
-          <dl className="mt-10 grid grid-cols-3 gap-4 border-t border-kraft/20 pt-6 sm:max-w-md">
-            <div>
-              <dt className="font-condensed text-xs uppercase tracking-widest text-kraft/50">Rubros</dt>
-              <dd className="font-mono text-2xl font-semibold text-safety">07</dd>
-            </div>
-            <div>
-              <dt className="font-condensed text-xs uppercase tracking-widest text-kraft/50">En el barrio</dt>
-              <dd className="font-mono text-2xl font-semibold text-safety">30+ años</dd>
-            </div>
-            <div>
-              <dt className="font-condensed text-xs uppercase tracking-widest text-kraft/50">Envíos</dt>
-              <dd className="font-mono text-2xl font-semibold text-safety">En Minas</dd>
-            </div>
-          </dl>
+          <p className="mt-10 max-w-md border-t border-kraft/20 pt-6 text-sm text-kraft/60">
+            Abrimos las persianas en {negocio.anioFundacion}. Hoy el mostrador lo atiende la
+            tercera generación de la familia, y seguimos en el mismo local del centro.
+          </p>
         </div>
 
         <div className="mx-auto w-full max-w-xs -rotate-2 lg:rotate-2 lg:justify-self-end">
           <div className="bg-kraft p-5 pb-8 text-ink shadow-[10px_10px_0_rgba(0,0,0,0.35)]">
             <div className="border-b-2 border-dashed border-graphite/40 pb-3 text-center">
-              <p className="font-display text-sm uppercase tracking-widest">{NEGOCIO.nombre}</p>
+              <p className="font-display text-sm uppercase tracking-widest">{negocio.nombre}</p>
               <p className="font-mono text-[11px] text-graphite-soft">Remito de ejemplo Nº 00042</p>
             </div>
             <ul className="mt-3 space-y-2 font-mono text-[11px]">
@@ -89,7 +90,7 @@ export function Hero() {
               <span>{formatearPrecio(TOTAL_TICKET)}</span>
             </div>
             <p className="mt-4 text-center font-condensed text-[10px] uppercase tracking-widest text-graphite-soft">
-              Gracias por elegirnos — pedido de ejemplo
+              Gracias por elegirnos, pedido de ejemplo
             </p>
           </div>
         </div>

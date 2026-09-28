@@ -1,6 +1,10 @@
 /**
- * Datos del negocio — FICTICIO, sitio de demostración de portafolio.
- * Cambiá acá nombre, dirección, teléfonos y horarios para adaptar la demo.
+ * Datos del negocio, FICTICIO: sitio de demostración de portafolio.
+ * Estos son los valores por DEFECTO: lo que se ve la primera vez que se abre
+ * el sitio, y lo que vuelve si en el panel (#/admin) se toca "Volver a los
+ * datos de ejemplo". Desde el panel, el dueño puede cambiar precios, fotos,
+ * horarios, etc. sin tocar código: esos cambios se guardan en el navegador
+ * (ver src/data/store.tsx).
  */
 
 export const NEGOCIO = {
@@ -16,6 +20,7 @@ export const NEGOCIO = {
   mapsQuery: 'Minas,+Lavalleja,+Uruguay',
   anioFundacion: 1994,
   instagram: '@eltornillo.minas',
+  avisoHome: 'Este sábado abrimos de 8:30 a 13. El resto de la semana, hasta las 19.',
 }
 
 // Horario de atención. Días: 0 = domingo ... 6 = sábado (coincide con Date#getDay).
@@ -61,3 +66,17 @@ export const AUTOR = {
   whatsapp: '59899000000',
   texto: 'Diseño y desarrollo web en Minas',
 }
+
+/**
+ * De dónde salen los datos del catálogo en esta demo:
+ * - 'local': se editan desde el panel (#/admin) y se guardan en este navegador.
+ * - 'sheets': se leen de una planilla de Google Sheets publicada como CSV
+ *   (gratis, sin backend). En ese modo el panel deja de mostrar el
+ *   formulario de productos y en cambio explica cómo editar la planilla.
+ *   Columnas esperadas (con encabezado en la primera fila), ver README:
+ *   codigo, nombre, rubro, unidad, precio, stock, oferta, precioAnterior,
+ *   destacado, activo, foto
+ */
+export type FuenteDatos = { tipo: 'local' } | { tipo: 'sheets'; csvUrl: string }
+
+export const FUENTE_DATOS: FuenteDatos = { tipo: 'local' }

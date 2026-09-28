@@ -14,11 +14,8 @@ export function Servicios() {
   return (
     <section id="servicios" className="bg-kraft-deep py-16 sm:py-24">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
-        <p className="font-condensed text-sm font-bold uppercase tracking-[0.3em] text-tool">
+        <h2 className="font-display text-4xl uppercase text-graphite sm:text-5xl">
           Más que venta de mostrador
-        </p>
-        <h2 className="mt-2 font-display text-4xl uppercase text-graphite sm:text-5xl">
-          Servicios del local
         </h2>
 
         <div className="mt-10 grid grid-cols-1 gap-px overflow-hidden border-2 border-graphite bg-graphite sm:grid-cols-2 lg:grid-cols-4">

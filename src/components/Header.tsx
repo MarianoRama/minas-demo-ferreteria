@@ -1,26 +1,23 @@
-import { useEffect, useState } from 'react'
-import { NEGOCIO } from '../config'
+import { useState } from 'react'
+import { useDatos } from '../data/contexto'
 import { RUBROS } from '../data/rubros'
-import { calcularEstadoHorario, type EstadoHorario } from '../utils/horario'
+import { useEstadoHorario } from '../hooks/useEstadoHorario'
 import { IconoCerrar, IconoMenu } from './Iconos'
 
-const ENLACES = [
-  { href: '#rubros', label: 'Rubros' },
-  { href: '#ofertas', label: 'Ofertas' },
-  { href: '#pedido', label: 'Armá tu pedido' },
-  { href: '#servicios', label: 'Servicios' },
-  { href: '#horarios', label: 'Horarios y ubicación' },
-  { href: '#contacto', label: 'Contacto' },
-]
+type Props = { onIrAOfertas: () => void }
 
-export function Header() {
+export function Header({ onIrAOfertas }: Props) {
+  const { negocio } = useDatos()
   const [abierto, setAbierto] = useState(false)
-  const [estado, setEstado] = useState<EstadoHorario>(calcularEstadoHorario)
+  const estado = useEstadoHorario(negocio.horarios)
 
-  useEffect(() => {
-    const id = window.setInterval(() => setEstado(calcularEstadoHorario()), 60_000)
-    return () => window.clearInterval(id)
-  }, [])
+  const enlaces = [
+    { href: '#rubros', label: 'Rubros' },
+    { href: '#pedido', label: 'Catálogo' },
+    { href: '#servicios', label: 'Servicios' },
+    { href: '#horarios', label: 'Horarios y ubicación' },
+    { href: '#contacto', label: 'Contacto' },
+  ]
 
   return (
     <header className="sticky top-0 z-40 border-b-4 border-graphite bg-kraft/95 backdrop-blur">
@@ -31,18 +28,26 @@ export function Header() {
           </span>
           <span className="min-w-0 leading-none">
             <span className="block truncate font-display text-lg tracking-wide text-graphite sm:text-xl">
-              {NEGOCIO.nombre.toUpperCase()}
+              {negocio.nombre.toUpperCase()}
             </span>
             <span className="block truncate font-condensed text-xs font-semibold uppercase tracking-[0.2em] text-graphite-soft">
-              {NEGOCIO.ciudad}
+              {negocio.ciudad}
             </span>
           </span>
         </a>
 
         <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={onIrAOfertas}
+            className="hidden min-h-[36px] items-center border-2 border-safety bg-safety px-3 font-condensed text-xs font-bold uppercase tracking-wide text-graphite transition hover:bg-safety-deep hover:border-safety-deep sm:flex"
+          >
+            Ofertas
+          </button>
+
           {estado && (
             <span
-              className={`hidden items-center gap-1.5 border-2 px-3 py-1.5 font-condensed text-xs font-bold uppercase tracking-wide sm:flex ${
+              className={`hidden items-center gap-1.5 border-2 px-3 py-1.5 font-condensed text-xs font-bold uppercase tracking-wide lg:flex ${
                 estado.abierto
                   ? 'border-ok bg-ok/10 text-ok'
                   : 'border-tool bg-tool/10 text-tool-deep'
@@ -56,7 +61,7 @@ export function Header() {
           )}
 
           <nav className="hidden lg:flex lg:gap-6">
-            {ENLACES.map((enlace) => (
+            {enlaces.map((enlace) => (
               <a
                 key={enlace.href}
                 href={enlace.href}
@@ -83,7 +88,19 @@ export function Header() {
       {abierto && (
         <nav id="menu-mobile" className="border-t-2 border-graphite bg-kraft px-4 py-4 lg:hidden">
           <ul className="flex flex-col gap-1">
-            {ENLACES.map((enlace) => (
+            <li>
+              <button
+                type="button"
+                onClick={() => {
+                  setAbierto(false)
+                  onIrAOfertas()
+                }}
+                className="flex min-h-[44px] w-full items-center text-left font-condensed text-base font-bold uppercase tracking-wide text-tool"
+              >
+                Ofertas de la semana
+              </button>
+            </li>
+            {enlaces.map((enlace) => (
               <li key={enlace.href}>
                 <a
                   href={enlace.href}
