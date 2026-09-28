@@ -1,41 +1,19 @@
-# Ferretería El Tornillo — sitio demo (portafolio)
+# Ferretería El Tornillo
 
-Este proyecto es una **demo de portafolio**, pensada para mostrarle a dueños de
-ferreterías de Minas (Uruguay) un ejemplo del tipo de sitio web que un
-freelancer les puede desarrollar. **No es el sitio de un negocio real**: el
-nombre "Ferretería El Tornillo", la dirección, el teléfono, el WhatsApp y los
-horarios son todos ficticios y están marcados como ejemplo en el propio
-código.
+Demostración de portafolio para una ferretería industrial. No representa un negocio real. Presenta rubros y un formulario que prepara una consulta para copiar; no realiza compras ni confirma stock.
 
-## Stack
+## Ejecutar
 
-- [Vite](https://vite.dev/) + [React](https://react.dev/) + TypeScript
-- [Tailwind CSS v4](https://tailwindcss.com/) (vía `@tailwindcss/vite`)
-- Sin librerías de íconos externas: los íconos son SVG inline
+`npm ci` y `npm run dev`. Producción: `npm run build`.
 
-## Contenido
+## Contacto
 
-Landing page de una sola página (single-page, con anclas) con:
+Copiar .env.example como .env.local y configurar VITE_WHATSAPP_NUMBER con 598 y ocho dígitos del contacto autorizado. Sin ese dato no se habilita el envío externo. El número de ejemplo 59899000000 está bloqueado.
 
-- Header con menú de anclas (Inicio, Productos, Nosotros, Contacto)
-- Hero con ilustración en SVG y llamado a la acción
-- Sección de rubros (herramientas, materiales de construcción, pintura,
-  electricidad, plomería, jardín)
-- Sección "Nosotros"
-- Horarios de atención y mapa de Google Maps embebido (búsqueda genérica de
-  "Minas, Uruguay", sin dirección real)
-- Botón flotante de WhatsApp (número de ejemplo)
-- Footer con datos de contacto ficticios
+El texto preparado se invalida si se modifica cualquier dato del formulario. Los datos solo viven durante la sesión de la página y no se guardan ni se envían automáticamente.
 
-## Cómo correrlo
+## Publicación
 
-```bash
-npm install
-npm run dev
-```
+GitHub Pages desde main, mediante .github/workflows/deploy.yml. Ruta base /minas-demo-ferreteria/. Para un dominio independiente, ajustar base y configuración. El noindex evita indexar el negocio ficticio; cambiarlo al adaptar la web a un cliente real.
 
-Para generar el build de producción:
-
-```bash
-npm run build
-```
+Para activar el número en GitHub Actions, añadirlo como variable del repositorio e inyectarlo en el paso de compilación. No usar teléfonos personales de prueba sin autorización.
