@@ -1,10 +1,192 @@
 @import "tailwindcss";
 
-html {
-  scroll-behavior: smooth;
+@import "@fontsource/anton";
+@import "@fontsource/barlow-condensed/500.css";
+@import "@fontsource/barlow-condensed/600.css";
+@import "@fontsource/barlow-condensed/700.css";
+@import "@fontsource/barlow/400.css";
+@import "@fontsource/barlow/500.css";
+@import "@fontsource/barlow/600.css";
+@import "@fontsource/ibm-plex-mono/400.css";
+@import "@fontsource/ibm-plex-mono/500.css";
+@import "@fontsource/ibm-plex-mono/600.css";
+@import "@fontsource/caveat/600.css";
+@import "@fontsource/caveat/700.css";
+
+@theme {
+  --font-display: "Anton", "Barlow Condensed", sans-serif;
+  --font-condensed: "Barlow Condensed", sans-serif;
+  --font-sans: "Barlow", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+  --font-marcador: "Caveat", cursive;
+
+  --color-kraft: #f2e9d8;
+  --color-kraft-deep: #e6d7b8;
+  --color-kraft-line: #cdb98d;
+  --color-ink: #211f1a;
+  --color-graphite: #2b2924;
+  --color-graphite-soft: #4a4638;
+  --color-graphite-deep: #17160f;
+  --color-safety: #f4bd0e;
+  --color-safety-deep: #c99000;
+  --color-tool: #c9481e;
+  --color-tool-deep: #9c3414;
+  --color-ok: #3d7a45;
+}
+
+/* El scroll suave de los anclas de navegación se maneja por JS (ver
+   useNavegacionSuave) para no interferir con scrollTo programático
+   (herramientas de test, etc.). No usamos scroll-behavior: smooth acá. */
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
 }
 
 body {
   margin: 0;
-  font-family: "Segoe UI", system-ui, Roboto, sans-serif;
+  background-color: var(--color-kraft);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+}
+
+/* Textura sutil de papel/kraft, sin imágenes externas */
+.textura-papel {
+  background-image:
+    radial-gradient(rgba(43, 41, 36, 0.05) 0.6px, transparent 0.6px),
+    radial-gradient(rgba(43, 41, 36, 0.04) 0.6px, transparent 0.6px);
+  background-size: 3px 3px, 5px 5px;
+  background-position: 0 0, 1.5px 1.5px;
+}
+
+.textura-diagonal {
+  background-image: repeating-linear-gradient(
+    45deg,
+    rgba(43, 41, 36, 0.045) 0,
+    rgba(43, 41, 36, 0.045) 1.5px,
+    transparent 1.5px,
+    transparent 14px
+  );
+}
+
+.linea-perforada {
+  background-image: repeating-linear-gradient(
+    to right,
+    var(--color-graphite-soft) 0,
+    var(--color-graphite-soft) 6px,
+    transparent 6px,
+    transparent 14px
+  );
+  height: 1px;
+}
+
+::selection {
+  background-color: var(--color-safety);
+  color: var(--color-ink);
+}
+
+/* Cinta de marcas: desplazamiento infinito y suave, pausa en hover */
+@keyframes cinta-marcas {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.cinta-marcas-track {
+  animation: cinta-marcas 32s linear infinite;
+}
+
+.cinta-marcas:hover .cinta-marcas-track,
+.cinta-marcas:focus-within .cinta-marcas-track {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cinta-marcas-track {
+    animation: none;
+    flex-wrap: wrap;
+    width: auto;
+  }
+  .cinta-marcas {
+    overflow-x: auto;
+  }
+}
+
+/* Tarjetas y bloques "con vida" al pasar el mouse */
+.tarjeta-viva {
+  transition:
+    transform 300ms ease-out,
+    box-shadow 300ms ease-out,
+    border-color 300ms ease-out;
+}
+
+@media (hover: hover) {
+  .tarjeta-viva:hover {
+    transform: translateY(-4px) scale(1.015);
+    box-shadow: 6px 10px 0 rgba(43, 41, 36, 0.18);
+  }
+}
+
+.tarjeta-viva:focus-within {
+  transform: translateY(-4px) scale(1.015);
+  box-shadow: 6px 10px 0 rgba(43, 41, 36, 0.18);
+}
+
+.enlace-flecha svg {
+  transition: transform 250ms ease-out;
+}
+
+.enlace-flecha:hover svg,
+.enlace-flecha:focus-visible svg {
+  transform: translateX(5px);
+}
+
+/* Sello de goma tipo "OFERTA": tinta algo desprolija, rotado. */
+.sello-oferta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 3px solid var(--color-tool);
+  border-radius: 3px;
+  color: var(--color-tool);
+  font-family: var(--font-condensed);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  transform: rotate(-7deg);
+  filter: url(#textura-sello);
+  mix-blend-mode: multiply;
+}
+
+/* Cartelito de precio escrito con marcador sobre cartón. */
+.etiqueta-precio {
+  font-family: var(--font-marcador);
+  font-weight: 700;
+  color: var(--color-tool-deep);
+  transform: rotate(-2deg);
+}
+
+/* Esquina de cinta de embalar sobre una nota o recorte. */
+.cinta-esquina {
+  position: absolute;
+  width: 46px;
+  height: 20px;
+  background: rgba(242, 233, 216, 0.65);
+  border: 1px solid rgba(43, 41, 36, 0.15);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+}
+
+/* Nota tipo post-it escrita a mano, pegada a la grilla. */
+.nota-manuscrita {
+  font-family: var(--font-marcador);
+  font-weight: 600;
+  color: var(--color-graphite);
+  background: #fff4b8;
+  box-shadow: 3px 4px 0 rgba(43, 41, 36, 0.15);
 }
